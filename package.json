@@ -1,0 +1,27 @@
+{
+  "name": "pavlok-punctual",
+  "version": "1.0.0",
+  "description": "A node service that links to google calendar and pavlok to send a zap when a user is late to a calendar event.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k/pavlok-punctuality.git"
+  },
+  "keywords": [
+    "pavlok",
+    "google",
+    "calendar"
+  ],
+  "author": "Kenneth Bambridge",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/k/pavlok-punctuality/issues"
+  },
+  "homepage": "https://github.com/k/pavlok-punctuality#readme",
+  "dependencies": {
+    "pavlok-beta-api-login": "^2.0.4"
+  }
+}
