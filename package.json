@@ -23,5 +23,8 @@
   "homepage": "https://github.com/k/pavlok-punctuality#readme",
   "dependencies": {
     "pavlok-beta-api-login": "^2.0.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
   }
 }
