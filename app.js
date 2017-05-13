@@ -7,10 +7,10 @@ pavlok.init("7f53e074cafe5151525a0934586bd39d4f7bc1156e67d53b862b9fa3dea1c6bd",
     "verbose": true,
     "app" : app,
     "message": "Hello! Stay punctual or else...",
-    "callbackUrl": "http://www.io.k33.me:3000/pavlok/result",
+    "callbackUrl": "http://io.k33.me:3000/pavlok/result",
     "callbackUrlPath": "/pavlok/result",
-    "successUrl": "/success",
-    "errorUrl": "/error"
+    "successPath": "/success",
+    "errorPath": "/error"
 });
 
 app.get("/auth", function(req, res) {
@@ -18,11 +18,26 @@ app.get("/auth", function(req, res) {
 });
 
 app.get("/success", function(req, res) {
-    console.log("It worked!");
+    console.log("Successfully authenticated!");
 });
 
 app.get("/error", function(req, res) {
-    console.log("It failed...");
+    console.log("Failed to authenticate");
+});
+
+app.get("/vibrate", function(req, res) {
+    pavlok.vibrate({ "request": req });
+    res.send("vibrate sent");
+});
+
+app.get("/beep", function(req, res) {
+    pavlok.beep({"intensity": 255, "request": req });
+    res.send("beep sent");
+});
+
+app.get("/zap", function(req, res) {
+    pavlok.zap({ "intensity": 30, "request": req });
+    res.send("zap sent");
 });
 
 app.listen(3000, function () {
