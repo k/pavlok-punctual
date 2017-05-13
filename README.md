@@ -17,7 +17,10 @@ This is a node module for running a server that links to Google Calendar and Pav
 - - [ ] Then set up as server
 - [ ] Connect to Google Calendar API
 - - [ ] Authentication
-- - [ ] Load recent events &  Exract locations 
+- - [ ] Load recent events &  extract locations 
+
+#### Other
+- [ ] Set up server with [`init.d`](https://thomashunter.name/blog/running-a-node-js-process-on-debian-as-an-init-d-service/) OR [Docker](https://nodejs.org/en/docs/guides/nodejs-docker-webapp/) container
 
 ### Mobile App Client
 - [ ] Test GeoMoby with a simple iOS test app and creating regions on the dashboard
