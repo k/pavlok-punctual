@@ -4,6 +4,7 @@
   "description": "A node service that links to google calendar and pavlok to send a zap when a user is late to a calendar event.",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,10 +23,12 @@
   },
   "homepage": "https://github.com/k/pavlok-punctuality#readme",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "express": "^4.15.2",
     "google-auth-library": "^0.10.0",
     "googleapis": "^19.0.0",
-    "pavlok-beta-api-login": "^2.0.4"
+    "pavlok-beta-api-login": "^2.0.4",
+    "sqlite": "^2.7.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1"

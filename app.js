@@ -1,20 +1,33 @@
-var express = require('express');
-var app = express();
+let express = require('express');
+let Promise = require('bluebird');
+let db = require('sqlite');
+let fs = require('fs');
+let StringDecoder = require('string_decoder').StringDecoder;
+let decoder =  new StringDecoder('utf8');
 
-var google = require('googleapis');
-var OAuth2 = google.auth.OAuth2;
-var oauth2Client = new OAuth2(
-  "624000516468-ddec6ig5llj3qpo0gnmarv3u3jujb4d9.apps.googleusercontent.com",
-  "BYNFUR9kCfad6KmbV9i6nixi",
-  "https://io.k33.me:3000/auth/gcal/callback"
+let SECRETS_DIR = __dirname + '/secrets/';
+
+let BASEURL = "http://io.k33.me:3000/"; // if production
+if (process.env.NODE_ENV == 'development') {
+    BASEURL = "http://localhost:3000/";
+}
+
+let google = require('googleapis');
+let OAuth2 = google.auth.OAuth2;
+let gcal_key_json = decoder.write(fs.readFileSync(SECRETS_DIR+'gcal.json'));
+let gcal_keys = JSON.parse(gcal_key_json);
+let oauth2Client = new OAuth2(
+    gcal_keys.web.client_id,
+    gcal_keys.web.client_secret,
+    BASEURL+"auth/gcal/callback"
 );
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes
-var scopes = [
+let scopes = [
   'https://www.googleapis.com/auth/calendar'
 ];
 
-var gcal_url = oauth2Client.generateAuthUrl({
+let gcal_url = oauth2Client.generateAuthUrl({
   // 'online' (default) or 'offline' (gets refresh_token)
   access_type: 'offline',
 
@@ -25,26 +38,30 @@ var gcal_url = oauth2Client.generateAuthUrl({
   // state: { foo: 'bar' }
 });
 
-var calendar = google.calendar({
+let calendar = google.calendar({
   version: 'v3',
   auth: oauth2Client
 });
 
-var pavlok = require('pavlok-beta-api-login');
-pavlok.init("7f53e074cafe5151525a0934586bd39d4f7bc1156e67d53b862b9fa3dea1c6bd",
-            "ff355d4688bc72b9641035a0edb8a8b569e67a305e32cf5fe329e9525b324513", {
-    "verbose": true,
-    "app" : app,
-    "message": "Hello! Stay punctual or else...",
-    "callbackUrl": "http://io.k33.me:3000/pavlok/result",
-    "callbackUrlPath": "/pavlok/result",
-    "successPath": "/success",
-    "errorPath": "/error"
-});
+let app = express();
 
 app.get("/auth/pavlok", function(req, res) {
     pavlok.auth(req, res);
 });
+
+let pavlok_key_json = decoder.write(fs.readFileSync(SECRETS_DIR+'pavlok.json'))
+let pavlok_keys = JSON.parse(pavlok_key_json)
+let pavlok = require('pavlok-beta-api-login');
+pavlok.init(pavlok_keys.client_id,
+    pavlok_keys.client_secret, {
+        "verbose": true,
+        "app" : app,
+        "message": "Hello! Stay punctual or else...",
+        "callbackUrl": BASEURL+"pavlok/result",
+        "callbackUrlPath": "/pavlok/result",
+        "successPath": "/success",
+        "errorPath": "/error"
+    });
 
 app.get("/auth/gcal", function(req, res) {
     res.redirect(gcal_url)
@@ -59,7 +76,8 @@ app.get("/error", function(req, res) {
 });
 
 app.get("/auth/gcal/callback", function(req, res) {
-    if (req.code) {
+    console.log(req)
+    if (req.query.code) {
         oauth2Client.getToken(req.code, function (err, tokens) {
             // Now tokens contains an access_token and an optional refresh_token. Save them.
             if (!err) {
@@ -88,8 +106,7 @@ app.get("/zap", function(req, res) {
 });
 
 app.get("/calendarList", function(req, res) {
-    console.log(calendar.calendarList.list)
-    res.send(calendar.calendarList.list)
+    res.send(calendar.calendarList)
 });
 
 app.listen(3000, function () {
