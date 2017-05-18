@@ -69,10 +69,12 @@ app.get("/auth/gcal", function(req, res) {
 
 app.get("/success", function(req, res) {
     console.log("Successfully authenticated!");
+    res.send("Thanks!");
 });
 
 app.get("/error", function(req, res) {
     console.log("Failed to authenticate");
+    res.send("Failed to authenticate :(");
 });
 
 app.get("/auth/gcal/callback", function(req, res) {
