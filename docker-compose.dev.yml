@@ -1,0 +1,14 @@
+version: '3'
+volumes:
+    node_modules:
+services:
+    web:
+        build: .
+        command: node_modules/.bin/gulp
+        environment:
+            NODE_ENV: development
+        ports:
+            - '3000:3000'
+        volumes:
+            - .:/home/app/pavlok
+            - node_modules:/home/app/pavlok/node_modules
