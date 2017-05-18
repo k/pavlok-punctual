@@ -8,7 +8,6 @@ ENV HOME=/home/app
 COPY package.json npm-shrinkwrap.json $HOME/pavlok/
 RUN chown -R app:app $HOME/*
 
-
 USER app
 WORKDIR $HOME/pavlok
 RUN npm install && npm cache clean
