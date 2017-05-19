@@ -1,6 +1,8 @@
 version: '3'
-volumes:
-    node_modules:
+# Removing named volumes for now while adding many packages
+# `docker compose exec` can be used to update packages
+#volumes:
+    #nodemodules:
 services:
     web:
         build: .
@@ -9,6 +11,7 @@ services:
             NODE_ENV: development
         ports:
             - '3000:3000'
+            - '9229:9229' # For debug server (not working)
         volumes:
             - .:/home/app/pavlok
-            - node_modules:/home/app/pavlok/node_modules
+            - /home/app/pavlok/node_modules
