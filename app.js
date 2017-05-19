@@ -1,13 +1,9 @@
 let express = require('express');
 let Promise = require('bluebird');
-let redis = require('redis');
 let fs = require('fs');
 let StringDecoder = require('string_decoder').StringDecoder;
 let decoder =  new StringDecoder('utf8');
 
-let r_client = redis.createClient({ host: 'redis'});
-Promise.promisifyAll(redis.RedisClient.prototype);
-Promise.promisifyAll(redis.Multi.prototype);
 
 let SECRETS_DIR = __dirname + '/secrets/';
 
@@ -25,6 +21,11 @@ let oauth2Client = new OAuth2(
     gcal_keys.web.client_secret,
     BASEURL+"auth/gcal/callback"
 );
+
+let google_api_key = decoder.write(fs.readFileSync(SECRETS_DIR + 'google_api_key.json'))
+let googleMapsClient = require('@google/maps').createClient({
+    key: google_api_key
+});
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes
 let scopes = [
@@ -164,7 +165,10 @@ function storeToken(token, service) {
  */
 function load_calendar() {
     calendar.calendarList.list({}, function(err, res) {
-        if (err)  console.log("Error loading calendar list");
+        if (err)  {
+            console.log("Error loading calendar list:\n" + err);
+            return
+        }
         var day_later = new Date();
         day_later.setDate(day_later.getDate() + 1);
         var isostring = day_later.toISOString();
@@ -175,8 +179,25 @@ function load_calendar() {
                 timeMin: new Date().toISOString()
             }, function(err, res) {
                 // find gps from locations and add to database
-                console.log(err);
-                console.log(res);
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                let items_with_locations = res.items.filter( (item) => {
+                    return (item.location) ? true: false;
+                });
+                for (item of items_with_locations) {
+                    console.log(item.location)
+                    googleMapsClient.geocode({
+                        address: item.location,
+                        region: 'us'
+                    }, function(err, resp) {
+                        if (!err) {
+                            console.log(resp.json.results)
+                        }
+                        console.log(err);
+                    });
+                }
             });
         }
     });
