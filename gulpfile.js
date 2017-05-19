@@ -12,6 +12,16 @@ gulp.task('run', function() {
       });
 });
 
+gulp.task('debug', function() {
+      if (node) node.kill();
+      node = spawn('node', ['--inspect-brk', 'app.js'], {stdio: 'inherit'});
+      node.on('close', function (code) {
+        if (code === 8) {
+          gulp.log('Error detected, waiting for changes...');
+        }
+      });
+});
+
 /**
  * $ gulp server
  * description: launch the server. If there's a server already running, kill it.
@@ -22,10 +32,12 @@ gulp.task('server', ['run'], function() {
   });
 });
 
-/**
- * $ gulp
- * description: start the development environment
- */
+gulp.task('server-debug', ['debug'], function() {
+  gulp.watch(['./app.js', './lib/**/*.js'], ['debug'], function() {
+      console.log("Files changed...restarting server");
+  });
+});
+
 gulp.task('default', ['server']);
 
 // clean up if an error goes unhandled.
