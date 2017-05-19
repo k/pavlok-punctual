@@ -2,6 +2,7 @@ version: '3'
 services:
     web:
         build: .
+        image: kbambridge/pavlok-punctual:latest
         deploy:
             replicas: 5
             resources:
