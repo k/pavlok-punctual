@@ -1,3 +1,5 @@
+// From https://gist.github.com/webdesserts/5632955
+
 var gulp = require('gulp'),
     spawn = require('child_process').spawn,
     node;
